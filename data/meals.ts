@@ -1,0 +1,173 @@
+import { MealModel } from "@/types/meal";
+
+export const MEALS: MealModel[] = [
+  {
+    id: "m1",
+    categoryIds: ["c1", "c2"],
+    title: "Spaghetti Carbonara",
+    affordability: "affordable",
+    complexity: "simple",
+    imageUrl:
+      "https://www.marthastewart.com/thmb/S9xVtnWSHldvxPHKOxEq0bALG-k=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/MSL-338686-spaghetti-carbonara-hero-3x2-69999-560b45d1dd9f4741b717176eff024839.jpeg",
+    duration: 25,
+    ingredients: ["Spaghetti", "Eggs", "Pancetta", "Parmesan", "Pepper"],
+    steps: ["Boil pasta", "Cook pancetta", "Mix eggs & cheese", "Combine all"],
+    isGlutenFree: false,
+    isVegan: false,
+    isVegetarian: false,
+    isLactoseFree: false,
+  },
+
+  {
+    id: "m2",
+    categoryIds: ["c2", "c7"],
+    title: "Avocado Toast",
+    affordability: "affordable",
+    complexity: "simple",
+    imageUrl:
+      "https://cdn.pixabay.com/photo/2016/03/05/19/02/avocado-1238247_1280.jpg",
+    duration: 10,
+    ingredients: ["Bread", "Avocado", "Salt", "Pepper", "Lemon"],
+    steps: ["Toast bread", "Mash avocado", "Spread & serve"],
+    isGlutenFree: false,
+    isVegan: true,
+    isVegetarian: true,
+    isLactoseFree: true,
+  },
+
+  {
+    id: "m3",
+    categoryIds: ["c3"],
+    title: "Classic Beef Burger",
+    affordability: "pricey",
+    complexity: "simple",
+    imageUrl:
+      "https://cdn.pixabay.com/photo/2014/10/23/18/05/burger-500054_1280.jpg",
+    duration: 40,
+    ingredients: ["Beef Patty", "Burger Buns", "Tomato", "Lettuce", "Cheese"],
+    steps: ["Grill patty", "Toast buns", "Assemble burger"],
+    isGlutenFree: false,
+    isVegan: false,
+    isVegetarian: false,
+    isLactoseFree: false,
+  },
+
+  {
+    id: "m4",
+    categoryIds: ["c4"],
+    title: "German Bratwurst",
+    affordability: "affordable",
+    complexity: "medium",
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/6/60/Bratwurst_1.jpg",
+    duration: 35,
+    ingredients: ["Bratwurst", "Mustard", "Bread Roll"],
+    steps: ["Grill sausage", "Serve with mustard & bread"],
+    isGlutenFree: false,
+    isVegan: false,
+    isVegetarian: false,
+    isLactoseFree: true,
+  },
+
+  {
+    id: "m5",
+    categoryIds: ["c5", "c10"],
+    title: "Summer Fruit Salad",
+    affordability: "affordable",
+    complexity: "simple",
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/5/50/Fruit_salad.jpg",
+    duration: 15,
+    ingredients: ["Strawberries", "Blueberries", "Kiwi", "Orange", "Mint"],
+    steps: ["Cut fruits", "Mix together", "Chill before serving"],
+    isGlutenFree: true,
+    isVegan: true,
+    isVegetarian: true,
+    isLactoseFree: true,
+  },
+
+  {
+    id: "m6",
+    categoryIds: ["c6", "c8"],
+    title: "Thai Green Curry",
+    affordability: "pricey",
+    complexity: "hard",
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/a/a1/Thai_green_curry.jpg",
+    duration: 50,
+    ingredients: ["Coconut Milk", "Green Curry Paste", "Chicken", "Basil"],
+    steps: ["Cook curry paste", "Add coconut milk", "Simmer chicken"],
+    isGlutenFree: true,
+    isVegan: false,
+    isVegetarian: false,
+    isLactoseFree: true,
+  },
+
+  {
+    id: "m7",
+    categoryIds: ["c8"],
+    title: "Sushi Platter",
+    affordability: "pricey",
+    complexity: "hard",
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/6/60/Sushi_platter.jpg",
+    duration: 60,
+    ingredients: ["Sushi Rice", "Nori", "Salmon", "Avocado"],
+    steps: ["Prepare rice", "Roll sushi", "Slice & serve"],
+    isGlutenFree: false,
+    isVegan: false,
+    isVegetarian: false,
+    isLactoseFree: true,
+  },
+
+  {
+    id: "m8",
+    categoryIds: ["c9"],
+    title: "French Crepes",
+    affordability: "affordable",
+    complexity: "medium",
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/0/0f/Crepes_suzette.jpg",
+    duration: 30,
+    ingredients: ["Flour", "Eggs", "Milk", "Butter"],
+    steps: ["Mix batter", "Cook thin layers", "Serve with toppings"],
+    isGlutenFree: false,
+    isVegan: false,
+    isVegetarian: true,
+    isLactoseFree: false,
+  },
+
+  {
+    id: "m9",
+    categoryIds: ["c7"],
+    title: "Pancakes",
+    affordability: "affordable",
+    complexity: "simple",
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/2/2c/Stack_of_pancakes.jpg",
+    duration: 20,
+    ingredients: ["Flour", "Milk", "Eggs", "Maple Syrup"],
+    steps: ["Mix ingredients", "Cook in pan", "Serve warm"],
+    isGlutenFree: false,
+    isVegan: false,
+    isVegetarian: true,
+    isLactoseFree: false,
+  },
+
+  {
+    id: "m10",
+    categoryIds: ["c10"],
+    title: "Grilled Corn on the Cob",
+    affordability: "affordable",
+    complexity: "simple",
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/3/3a/Grilled_corn_on_the_cob.jpg",
+    duration: 20,
+    ingredients: ["Corn", "Butter", "Salt"],
+    steps: ["Grill corn", "Brush butter", "Season & serve"],
+    isGlutenFree: true,
+    isVegan: false,
+    isVegetarian: true,
+    isLactoseFree: false,
+  },
+];
