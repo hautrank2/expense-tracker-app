@@ -19,8 +19,10 @@ export default function RootLayout() {
       <AllProviders>
         <StatusBar style="auto" />
         <Stack>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="overview" />
+          <Stack.Screen
+            name="overview"
+            options={{ title: "Expense Tracker" }}
+          />
         </Stack>
       </AllProviders>
     </ThemeProvider>

@@ -1,44 +1,59 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
+import { View } from "react-native";
+import { BottomNavigation, Icon, Provider } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const ExpenseLayout = () => {
+import AllExpenseScreen from "./all";
+import RecentExpenseScreen from "./recent";
+
+const TAB_BAR_HEIGHT = 64; // chỉnh 72~88 tuỳ UI
+
+const routes = [
+  { key: "recent", title: "Recent", focusedIcon: "clock-outline" },
+  { key: "all", title: "All", focusedIcon: "format-list-bulleted" },
+];
+
+export default function ExpenseLayout() {
+  const [index, setIndex] = useState(0);
+  const insets = useSafeAreaInsets();
+
+  const renderScene = () => {
+    switch (routes[index].key) {
+      case "recent":
+        return <RecentExpenseScreen />;
+      case "all":
+        return <AllExpenseScreen />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: "#6200ee",
-      }}
-      initialRouteName="recent"
-    >
-      <Tabs.Screen
-        name="recent"
-        options={{
-          title: "Recent Expense",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="clock-outline"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="all"
-        options={{
-          title: "All Expense",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="clock-outline"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
-    </Tabs>
-  );
-};
+    <Provider>
+      {/* Scene */}
+      <View
+        style={{ flex: 1, paddingBottom: TAB_BAR_HEIGHT + insets.bottom + 80 }}
+      >
+        {renderScene()}
+      </View>
 
-export default ExpenseLayout;
+      {/* Bar */}
+      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+        <BottomNavigation.Bar
+          style={{ height: TAB_BAR_HEIGHT }}
+          navigationState={{ index, routes }}
+          onTabPress={({ route }) => {
+            const newIndex = routes.findIndex((r) => r.key === route.key);
+            if (newIndex !== -1) setIndex(newIndex);
+          }}
+          renderIcon={({ route, color }) => (
+            <Icon source={route.focusedIcon} size={24} color={color} />
+          )}
+          getLabelText={({ route }) => route.title}
+        />
+        {/* nếu muốn chắc kèo: thêm spacer cho safe area */}
+        <View style={{ height: insets.bottom }} />
+      </View>
+    </Provider>
+  );
+}
