@@ -1,17 +1,29 @@
 import { EXPENSE_DATA } from "@/data/expense";
 import { cn } from "@/lib/cn";
 import dayjs from "dayjs";
-import React, { useMemo } from "react";
+import { Link, useNavigation } from "expo-router";
+import React, { useLayoutEffect, useMemo } from "react";
 import { FlatList, View } from "react-native";
-import { Card, Text } from "react-native-paper";
+import { Card, Icon, Text } from "react-native-paper";
 
 const Screen = () => {
   const data = EXPENSE_DATA;
-
+  const navigation = useNavigation();
   const sum = useMemo(
     () => data.reduce((acc, curr) => acc + curr.amount, 0),
     [data],
   );
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Link href={"/overview/manage-expense"}>
+          <Icon source={"plus"} size={24} />
+        </Link>
+      ),
+    });
+  }, []);
+
   return (
     <View className="p-4">
       <Card mode="contained" className="mb-4">
