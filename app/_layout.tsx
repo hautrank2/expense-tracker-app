@@ -18,10 +18,14 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <AllProviders>
         <StatusBar style="auto" />
-        <Stack>
+        <Stack initialRouteName="overview">
           <Stack.Screen
             name="overview"
             options={{ title: "Expense Tracker" }}
+          />
+          <Stack.Screen
+            name="manage-expense"
+            options={{ title: "Manage Expense", presentation: "modal" }}
           />
         </Stack>
       </AllProviders>

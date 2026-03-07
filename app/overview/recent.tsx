@@ -1,28 +1,26 @@
-import { EXPENSE_DATA } from "@/data/expense";
 import { cn } from "@/lib/cn";
+import { useAppSelector } from "@/store";
 import dayjs from "dayjs";
-import { Link, useNavigation } from "expo-router";
-import React, { useLayoutEffect, useMemo } from "react";
-import { FlatList, View } from "react-native";
-import { Card, Icon, Text } from "react-native-paper";
+import { useRouter } from "expo-router";
+import React, { useMemo } from "react";
+import { FlatList, Pressable, View } from "react-native";
+import { Card, Text } from "react-native-paper";
 
 const Screen = () => {
-  const data = EXPENSE_DATA;
-  const navigation = useNavigation();
-  const sum = useMemo(
-    () => data.reduce((acc, curr) => acc + curr.amount, 0),
-    [data],
-  );
+  const { data } = useAppSelector((s) => s.expense);
+  const router = useRouter();
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Link href={"/overview/manage-expense"}>
-          <Icon source={"plus"} size={24} />
-        </Link>
-      ),
-    });
-  }, []);
+  const filterdData = useMemo(() => {
+    // filter last 7 days
+    return data.filter((item) =>
+      dayjs(item.date).isAfter(dayjs().subtract(8, "d")),
+    );
+  }, [data]);
+
+  const sum = useMemo(
+    () => filterdData.reduce((acc, curr) => acc + curr.amount, 0),
+    [filterdData],
+  );
 
   return (
     <View className="p-4">
@@ -33,26 +31,35 @@ const Screen = () => {
         </Card.Content>
       </Card>
       <FlatList
-        data={data}
+        data={filterdData}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="p-2"
         renderItem={({ item, index }) => {
           return (
-            <Card className={cn(index > 0 ? "mt-2" : "")}>
-              <Card.Content>
-                <View className="flex flex-row justify-between">
-                  <View>
-                    <Text variant="titleSmall">
-                      {dayjs(item.date).format("MMM DD YYYY")}
-                    </Text>
-                    <Text variant="bodyMedium">{item.description}</Text>
+            <Pressable
+              className={cn("mx-2 my-2")}
+              onPress={() => {
+                router.push({
+                  pathname: "/manage-expense",
+                  params: { expenseId: item.id },
+                });
+              }}
+            >
+              <Card>
+                <Card.Content>
+                  <View className="flex flex-row justify-between">
+                    <View>
+                      <Text variant="titleSmall">
+                        {dayjs(item.date).format("MMM DD YYYY")}
+                      </Text>
+                      <Text variant="bodyMedium">{item.description}</Text>
+                    </View>
+                    <View>
+                      <Text variant="bodyLarge">${item.amount}</Text>
+                    </View>
                   </View>
-                  <View>
-                    <Text variant="bodyLarge">${item.amount}</Text>
-                  </View>
-                </View>
-              </Card.Content>
-            </Card>
+                </Card.Content>
+              </Card>
+            </Pressable>
           );
         }}
       />

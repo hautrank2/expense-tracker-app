@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { View } from "react-native";
-import { BottomNavigation, Icon, Provider } from "react-native-paper";
+import {
+  BottomNavigation,
+  Icon,
+  IconButton,
+  Provider,
+} from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useNavigation, useRouter } from "expo-router";
 import AllExpenseScreen from "./all";
 import RecentExpenseScreen from "./recent";
 
@@ -16,6 +22,8 @@ const routes = [
 export default function ExpenseLayout() {
   const [index, setIndex] = useState(0);
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+  const router = useRouter();
 
   const renderScene = () => {
     switch (routes[index].key) {
@@ -27,6 +35,17 @@ export default function ExpenseLayout() {
         return null;
     }
   };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          icon="plus"
+          onPress={() => router.push("/manage-expense")}
+        />
+      ),
+    });
+  }, [navigation, router]);
 
   return (
     <Provider>
