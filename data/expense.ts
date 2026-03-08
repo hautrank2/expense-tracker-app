@@ -1,7 +1,11 @@
 const daysAgo = (days: number) => {
   const d = new Date();
   d.setDate(d.getDate() - days);
-  return d;
+  return d.toISOString();
+};
+
+export const generateId = (): string => {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 };
 
 export const EXPENSE_DATA = [

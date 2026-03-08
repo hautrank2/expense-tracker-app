@@ -1,5 +1,6 @@
 import { cn } from "@/lib/cn";
 import { useAppSelector } from "@/store";
+import { formatNumber } from "@/utils/number";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
@@ -12,9 +13,9 @@ const Screen = () => {
 
   const filterdData = useMemo(() => {
     // filter last 7 days
-    return data.filter((item) =>
-      dayjs(item.date).isAfter(dayjs().subtract(8, "d")),
-    );
+    return data
+      .filter((item) => dayjs(item.date).isAfter(dayjs().subtract(8, "d")))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [data]);
 
   const sum = useMemo(
@@ -54,7 +55,9 @@ const Screen = () => {
                       <Text variant="bodyMedium">{item.description}</Text>
                     </View>
                     <View>
-                      <Text variant="bodyLarge">${item.amount}</Text>
+                      <Text variant="bodyLarge">
+                        ${formatNumber(item.amount)}
+                      </Text>
                     </View>
                   </View>
                 </Card.Content>

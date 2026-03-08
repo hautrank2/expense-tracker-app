@@ -11,6 +11,9 @@ import { Stack } from "expo-router";
 import { useColorScheme } from "react-native";
 import "../global.css";
 
+import { enGB, registerTranslation } from "react-native-paper-dates";
+registerTranslation("en-GB", enGB);
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
