@@ -4,7 +4,7 @@ import { ExpenseModel } from "@/types/expense";
 import { formatNumber } from "@/utils/number";
 import dayjs from "dayjs";
 import { useFocusEffect, useRouter } from "expo-router";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, Pressable, View } from "react-native";
 import { Card, Text } from "react-native-paper";
 
@@ -26,6 +26,7 @@ const Screen = () => {
   const fetchData = useCallback(async () => {
     try {
       const apiRes = await expenseApi.getExpense();
+      console.log("fetchData", apiRes);
       setData(apiRes);
     } catch (err) {
       console.log(err);
@@ -37,6 +38,10 @@ const Screen = () => {
       fetchData();
     }, [fetchData]),
   );
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <View className="p-4">
