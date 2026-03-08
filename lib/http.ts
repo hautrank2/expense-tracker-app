@@ -19,11 +19,33 @@ axios.interceptors.request.use(
 const expenseSegment = "/expenses.json";
 
 export const expenseApi = {
-  getExpense: () => {
-    return axios.get(expenseSegment);
+  getExpense: async () => {
+    const res =
+      await axios.get<Record<string, Omit<ExpenseModel, "id">>>(expenseSegment);
+    return res.data
+      ? Object.entries(res.data).reduce((acc, [id, value]) => {
+          acc.push({
+            id,
+            ...value,
+          });
+          return acc;
+        }, [] as ExpenseModel[])
+      : [];
+  },
+
+  getExpenseById: async (id: string) => {
+    const res = await axios.get<Omit<ExpenseModel, "id">>(
+      `/expenses/${id}.json`,
+    );
+
+    return res.data ? { ...res.data, id } : null;
   },
 
   addExpense: (data: Omit<ExpenseModel, "id">) => {
     return axios.post(expenseSegment, data);
+  },
+
+  editExpense: (id: string, data: Omit<ExpenseModel, "id">) => {
+    return axios.put(`/expenses/${id}.json`, data);
   },
 };

@@ -1,6 +1,5 @@
-import { generateId } from "@/data/expense";
+import { expenseApi } from "@/lib/http";
 import { useAppDispatch } from "@/store";
-import { addExpense, editExpense } from "@/store/expense";
 import { ExpenseModel } from "@/types/expense";
 import React, { useMemo, useState } from "react";
 import { Platform, View } from "react-native";
@@ -94,15 +93,9 @@ export const ExpenseForm = ({
           };
 
           if (isEdit) {
-            dispatch(editExpense({ id: expenseId, updatedData: formData }));
+            await expenseApi.editExpense(expenseId, formData);
           } else {
-            // await expenseApi.addExpense(formData);
-            dispatch(
-              addExpense({
-                id: generateId(),
-                ...formData,
-              }),
-            );
+            await expenseApi.addExpense(formData);
           }
 
           afterSuccess?.();
@@ -114,7 +107,7 @@ export const ExpenseForm = ({
   };
 
   return (
-    <View className="expense-form flex-1 p-4 flex flex-col gap-2">
+    <View className="expense-form p-4 flex flex-col gap-2">
       {/* Form */}
       <View className="expense-fields flex flex-col gap-2">
         <View className="grid grid-cols-2 gap-2">

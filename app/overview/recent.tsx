@@ -1,16 +1,16 @@
 import { cn } from "@/lib/cn";
-import { useAppSelector } from "@/store";
+import { expenseApi } from "@/lib/http";
+import { ExpenseModel } from "@/types/expense";
 import { formatNumber } from "@/utils/number";
 import dayjs from "dayjs";
-import { useRouter } from "expo-router";
-import React, { useMemo } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, Pressable, View } from "react-native";
 import { Card, Text } from "react-native-paper";
 
 const Screen = () => {
-  const { data } = useAppSelector((s) => s.expense);
   const router = useRouter();
-
+  const [data, setData] = useState<ExpenseModel[]>([]);
   const filterdData = useMemo(() => {
     // filter last 7 days
     return data
@@ -23,12 +23,32 @@ const Screen = () => {
     [filterdData],
   );
 
+  const fetchData = useCallback(async () => {
+    try {
+      const apiRes = await expenseApi.getExpense();
+      setData(apiRes);
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData]),
+  );
+
   return (
     <View className="p-4">
-      <Card mode="contained" className="mb-4">
-        <Card.Content className="flex flex-row justify-between items-center">
-          <Text variant="labelMedium">Last 7 days</Text>
-          <Text variant="titleMedium">${sum.toFixed(2)}</Text>
+      <Card mode="contained" className="mb-4 py-0">
+        <Card.Content className="flex flex-row justify-between items-center py-2">
+          <View>
+            <Text variant="titleMedium">Last 7 days</Text>
+            <Text variant="bodyMedium">Transactions: {filterdData.length}</Text>
+          </View>
+          <View>
+            <Text variant="titleLarge">${sum.toFixed(2)}</Text>
+          </View>
         </Card.Content>
       </Card>
       <FlatList
@@ -48,11 +68,14 @@ const Screen = () => {
               <Card>
                 <Card.Content>
                   <View className="flex flex-row justify-between">
-                    <View>
-                      <Text variant="titleSmall">
-                        {dayjs(item.date).format("MMM DD YYYY")}
-                      </Text>
-                      <Text variant="bodyMedium">{item.description}</Text>
+                    <View className="flex flex-row items-center gap-3">
+                      <Text variant="headlineMedium">{index + 1}</Text>
+                      <View>
+                        <Text variant="bodySmall">
+                          {dayjs(item.date).format("MMM DD YYYY")}
+                        </Text>
+                        <Text variant="bodyMedium">{item.description}</Text>
+                      </View>
                     </View>
                     <View>
                       <Text variant="bodyLarge">
