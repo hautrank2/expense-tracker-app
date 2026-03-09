@@ -20,11 +20,9 @@ const expenseSegment = "/expenses.json";
 
 export const expenseApi = {
   getExpense: async () => {
-    console.log("expenseApi");
     const res =
       await axios.get<Record<string, Omit<ExpenseModel, "id">>>(expenseSegment);
 
-    console.log("get", res);
     return res.data
       ? Object.entries(res.data).reduce((acc, [id, value]) => {
           acc.push({

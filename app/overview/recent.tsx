@@ -26,7 +26,6 @@ const Screen = () => {
   const fetchData = useCallback(async () => {
     try {
       const apiRes = await expenseApi.getExpense();
-      console.log("fetchData", apiRes);
       setData(apiRes);
     } catch (err) {
       console.log(err);
