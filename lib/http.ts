@@ -3,6 +3,7 @@ import axios from "axios";
 
 const API_ENDPOINT =
   "https://expense-app-26727-default-rtdb.asia-southeast1.firebasedatabase.app";
+const API_KEY = "AIzaSyAnFPk8ojlqxeqg-xdz2rVMQodooLNtZNE";
 
 axios.interceptors.request.use(
   function (config) {
@@ -52,5 +53,17 @@ export const expenseApi = {
 
   deleteExpense: (id: string) => {
     return axios.delete(`/expenses/${id}.json`);
+  },
+};
+
+export const authApi = {
+  signup: (payload: { email: string; password: string }) => {
+    return axios.post(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`,
+      {
+        ...payload,
+        returnSecureToken: true,
+      },
+    );
   },
 };

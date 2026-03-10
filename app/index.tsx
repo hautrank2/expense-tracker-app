@@ -1,8 +1,10 @@
+import { useAuthCtx } from "@/store/auth";
 import { Redirect } from "expo-router";
 import React from "react";
 
 const Screen = () => {
-  return <Redirect href="/overview/recent" />;
+  const { isAuthenticated } = useAuthCtx();
+  return <Redirect href={isAuthenticated ? "/overview/recent" : "/login"} />;
 };
 
 export default Screen;

@@ -1,17 +1,22 @@
 import React, {
-    createContext,
-    ReactNode,
-    useCallback,
-    useContext,
-    useMemo,
-    useState,
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
 } from "react";
 
 type AuthContextType = {
   isAuthenticated: boolean;
-  token: string | null;
-  onAuthticate: (token: string) => void;
+  payload: AuthPayload | null;
+  onAuthticate: (token: AuthPayload) => void;
   onLogout: () => void;
+};
+
+export type AuthPayload = {
+  email: string;
+  token: string;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,27 +25,25 @@ type AuthContextProviderProps = {
   children: ReactNode;
 };
 
-export const AuthContextProvider = ({
-  children,
-}: AuthContextProviderProps) => {
-  const [token, setToken] = useState<string | null>(null);
+export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
+  const [payload, setPayload] = useState<AuthPayload | null>(null);
 
-  const onAuthticate = useCallback((newToken: string) => {
-    setToken(newToken);
+  const onAuthticate = useCallback((newToken: AuthPayload) => {
+    setPayload(newToken);
   }, []);
 
   const onLogout = useCallback(() => {
-    setToken(null);
+    setPayload(null);
   }, []);
 
   const value = useMemo<AuthContextType>(
     () => ({
-      isAuthenticated: !!token,
-      token,
+      isAuthenticated: !!payload,
+      payload,
       onAuthticate,
       onLogout,
     }),
-    [token, onAuthticate, onLogout]
+    [onAuthticate, onLogout, payload],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

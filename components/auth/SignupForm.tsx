@@ -1,38 +1,31 @@
-import { useRouter } from "expo-router";
-import React from "react";
+import { authApi } from "@/lib/http";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Pressable, View } from "react-native";
-import {
-  Button,
-  HelperText,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
+import { View } from "react-native";
+import { Button, HelperText, Snackbar, TextInput } from "react-native-paper";
 
-export type LoginFormProps = {
-  defaultValues?: Partial<LoginValues>;
-  afterSuccess?: (values: LoginValues) => void | Promise<void>;
+export type SignupFormProps = {
+  defaultValues?: Partial<SignupValues>;
+  afterSuccess?: (values: SignupValues) => void;
   onCancel?: () => void;
 };
 
-export type LoginValues = {
+export type SignupValues = {
   email: string;
   password: string;
 };
 
-export const LoginForm = ({
+export const SignupForm = ({
   defaultValues,
   afterSuccess,
   onCancel,
-}: LoginFormProps) => {
-  const theme = useTheme();
-  const router = useRouter();
+}: SignupFormProps) => {
+  const [snackbar, setSnackbar] = useState<string | null>(null);
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting },
-  } = useForm<LoginValues>({
+    formState: { errors, isValid },
+  } = useForm<SignupValues>({
     mode: "onChange",
     defaultValues: {
       email: defaultValues?.email ?? "",
@@ -40,19 +33,39 @@ export const LoginForm = ({
     },
   });
 
-  const onSubmit = async (values: LoginValues) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onSubmit = async (values: SignupValues) => {
     try {
-      await afterSuccess?.({
+      setIsSubmitting(true);
+      const apiRes = await authApi.signup(values);
+      console.log(apiRes);
+
+      afterSuccess?.({
         email: values.email.trim(),
         password: values.password,
       });
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <View className="flex flex-col gap-2">
+      <Snackbar
+        visible={!!snackbar}
+        onDismiss={() => setSnackbar(null)}
+        action={{
+          label: "Close",
+          onPress: () => {
+            setSnackbar(null);
+          },
+        }}
+      >
+        {snackbar}
+      </Snackbar>
       <View className="flex flex-col gap-2">
         <View>
           <Controller
@@ -67,12 +80,12 @@ export const LoginForm = ({
                   return "Please enter your email";
                 }
 
-                if (trimmed.length < 3) {
-                  return "email must be at least 3 characters";
+                if (!/^\S+@\S+\.\S+$/.test(trimmed)) {
+                  return "Please enter a valid email address";
                 }
 
-                if (trimmed.length > 50) {
-                  return "email must be no longer than 50 characters";
+                if (trimmed.length > 100) {
+                  return "Email must be no longer than 100 characters";
                 }
 
                 return true;
@@ -83,6 +96,7 @@ export const LoginForm = ({
                 disabled={isSubmitting}
                 mode="outlined"
                 label="Email"
+                keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
                 value={value}
@@ -132,18 +146,6 @@ export const LoginForm = ({
         </View>
       </View>
 
-      <View>
-        <Pressable
-          onPress={() => {
-            router.push("/signup");
-          }}
-        >
-          <Text variant="titleMedium" style={{ color: theme.colors.primary }}>
-            Create a new account
-          </Text>
-        </Pressable>
-      </View>
-
       <View className="flex flex-row gap-2 items-center justify-end">
         {onCancel && (
           <Button
@@ -162,7 +164,7 @@ export const LoginForm = ({
           loading={isSubmitting}
           disabled={!isValid || isSubmitting}
         >
-          Login
+          Sign up
         </Button>
       </View>
     </View>
