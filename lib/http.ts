@@ -3,7 +3,7 @@ import axios from "axios";
 
 const API_ENDPOINT =
   "https://expense-app-26727-default-rtdb.asia-southeast1.firebasedatabase.app";
-const API_KEY = "AIzaSyAnFPk8ojlqxeqg-xdz2rVMQodooLNtZNE";
+const API_KEY = "AIzaSyA17Fs9OYoEv24iUvE8yF4whvbl9yu2CzA";
 
 axios.interceptors.request.use(
   function (config) {

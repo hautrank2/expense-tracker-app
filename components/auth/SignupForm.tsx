@@ -1,4 +1,7 @@
-import { authApi } from "@/lib/http";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+} from "@react-native-firebase/auth";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
@@ -38,8 +41,13 @@ export const SignupForm = ({
   const onSubmit = async (values: SignupValues) => {
     try {
       setIsSubmitting(true);
-      const apiRes = await authApi.signup(values);
-      console.log(apiRes);
+      const apiRes = await createUserWithEmailAndPassword(
+        getAuth(),
+        values.email,
+        values.password,
+      );
+
+      console.log("apiRes", apiRes);
 
       afterSuccess?.({
         email: values.email.trim(),

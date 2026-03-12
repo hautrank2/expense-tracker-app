@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1019074735843",
+    "firebase_url": "https://expense-app-26727-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "expense-app-26727",
+    "storage_bucket": "expense-app-26727.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1019074735843:android:1fade08f65d2262ceb1fd6",
+        "android_client_info": {
+          "package_name": "com.hautran.expense"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA17Fs9OYoEv24iUvE8yF4whvbl9yu2CzA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
