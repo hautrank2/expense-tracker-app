@@ -1,12 +1,9 @@
-import {
-  createUserWithEmailAndPassword,
-  getAuth,
-} from "@react-native-firebase/auth";
+import { auth } from "@/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
 import { Button, HelperText, Snackbar, TextInput } from "react-native-paper";
-
 export type SignupFormProps = {
   defaultValues?: Partial<SignupValues>;
   afterSuccess?: (values: SignupValues) => void;
@@ -42,7 +39,7 @@ export const SignupForm = ({
     try {
       setIsSubmitting(true);
       const apiRes = await createUserWithEmailAndPassword(
-        getAuth(),
+        auth,
         values.email,
         values.password,
       );
