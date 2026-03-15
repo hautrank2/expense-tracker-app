@@ -34,7 +34,7 @@ const RootStack = () => {
     <Stack>
       <Stack.Protected guard={!isAuthenticated}>
         <Stack.Screen name="login" options={{ title: "Login" }} />
-        <Stack.Screen name="signup" options={{ title: "Signup" }} />
+        <Stack.Screen name="sign-up" options={{ title: "Signup" }} />
       </Stack.Protected>
       <Stack.Protected guard={isAuthenticated}>
         <Stack.Screen name="overview" options={{ title: "Expense Tracker" }} />

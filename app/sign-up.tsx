@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 
-const Screen = () => {
+const SignupScreen = () => {
   const router = useRouter();
   return (
     <View className="flex-1 p-4">
@@ -27,4 +27,4 @@ const Screen = () => {
   );
 };
 
-export default Screen;
+export default SignupScreen;

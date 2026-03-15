@@ -135,7 +135,7 @@ export const LoginForm = ({
       <View>
         <Pressable
           onPress={() => {
-            router.push("/signup");
+            router.push("/sign-up");
           }}
         >
           <Text variant="titleMedium" style={{ color: theme.colors.primary }}>
