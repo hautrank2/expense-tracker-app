@@ -29,15 +29,15 @@ export default function RootLayout() {
 }
 
 const RootStack = () => {
-  const { isAuthenticated } = useAuthCtx();
+  const authCtx = useAuthCtx();
+  const { isAuthenticated } = authCtx;
+
   return (
     <Stack>
-      <Stack.Screen name="login" options={{ title: "Login" }} />
-      <Stack.Screen name="sign-up" options={{ title: "Signup" }} />
-      {/* <Stack.Protected guard={!isAuthenticated}>
+      <Stack.Protected guard={!isAuthenticated}>
         <Stack.Screen name="login" options={{ title: "Login" }} />
         <Stack.Screen name="sign-up" options={{ title: "Signup" }} />
-      </Stack.Protected> */}
+      </Stack.Protected>
       <Stack.Protected guard={isAuthenticated}>
         <Stack.Screen name="overview" options={{ title: "Expense Tracker" }} />
         <Stack.Screen

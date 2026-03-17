@@ -1,10 +1,14 @@
+import { auth } from "@/firebase";
 import { useRouter } from "expo-router";
-import React from "react";
+import { FirebaseError } from "firebase/app";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, View } from "react-native";
 import {
   Button,
   HelperText,
+  Snackbar,
   Text,
   TextInput,
   useTheme,
@@ -12,8 +16,43 @@ import {
 
 export type LoginFormProps = {
   defaultValues?: Partial<LoginValues>;
-  afterSuccess?: (values: LoginValues) => void | Promise<void>;
+  afterSuccess?: (
+    result: LoginResult,
+    values: LoginValues,
+  ) => void | Promise<void>;
   onCancel?: () => void;
+};
+
+export type LoginResult = {
+  _tokenResponse: {
+    displayName: string;
+    email: string;
+    expiresIn: string;
+    idToken: string;
+    kind: string;
+    localId: string;
+    refreshToken: string;
+    registered: boolean;
+  };
+  operationType: "signIn" | "signUp" | "link";
+  providerId: string | null;
+  user: {
+    _redirectEventId?: string | null;
+    apiKey: string;
+    appName: string;
+    createdAt: string;
+    displayName?: string | null;
+    email: string;
+    emailVerified: boolean;
+    isAnonymous: boolean;
+    lastLoginAt: string;
+    phoneNumber?: string | null;
+    photoURL?: string | null;
+    providerData: unknown[];
+    stsTokenManager: Record<string, unknown>;
+    tenantId?: string | null;
+    uid: string;
+  };
 };
 
 export type LoginValues = {
@@ -21,11 +60,21 @@ export type LoginValues = {
   password: string;
 };
 
+const onLogin = async (
+  email: string,
+  password: string,
+): Promise<LoginResult> => {
+  const res = await signInWithEmailAndPassword(auth, email, password);
+  const raw = res as unknown as LoginResult;
+  return raw;
+};
+
 export const LoginForm = ({
   defaultValues,
   afterSuccess,
   onCancel,
 }: LoginFormProps) => {
+  const [snackbar, setSnackbar] = useState<string | null>(null);
   const theme = useTheme();
   const router = useRouter();
   const {
@@ -42,17 +91,41 @@ export const LoginForm = ({
 
   const onSubmit = async (values: LoginValues) => {
     try {
-      await afterSuccess?.({
+      const loginRes = await onLogin(values.email, values.password);
+
+      await afterSuccess?.(loginRes, {
         email: values.email.trim(),
         password: values.password,
       });
-    } catch (err) {
-      console.log(err);
+    } catch (err: unknown) {
+      let str = "";
+      if (err instanceof FirebaseError) {
+        switch (err.code) {
+          case "auth/invalid-credential":
+            str = "Email or password incorrect";
+            break;
+          default:
+            str = "Something wrong";
+        }
+      }
+      setSnackbar(str);
     }
   };
 
   return (
-    <View className="flex flex-col gap-2">
+    <View className="flex flex-col gap-2 flex-1">
+      <Snackbar
+        visible={!!snackbar}
+        onDismiss={() => setSnackbar(null)}
+        action={{
+          label: "Close",
+          onPress: () => {
+            setSnackbar(null);
+          },
+        }}
+      >
+        {snackbar}
+      </Snackbar>
       <View className="flex flex-col gap-2">
         <View>
           <Controller
@@ -144,27 +217,26 @@ export const LoginForm = ({
         </Pressable>
       </View>
 
-      <View className="flex flex-row gap-2 items-center justify-end">
-        {onCancel && (
-          <Button
-            mode="text"
-            onPress={onCancel}
-            loading={isSubmitting}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
-        )}
-
+      {onCancel && (
         <Button
-          mode="contained"
-          onPress={handleSubmit(onSubmit)}
+          mode="text"
+          onPress={onCancel}
           loading={isSubmitting}
-          disabled={!isValid || isSubmitting}
+          disabled={isSubmitting}
         >
-          Login
+          Cancel
         </Button>
-      </View>
+      )}
+
+      <Button
+        mode="contained"
+        onPress={handleSubmit(onSubmit)}
+        loading={isSubmitting}
+        disabled={!isValid || isSubmitting}
+        className="mt-2"
+      >
+        Login
+      </Button>
     </View>
   );
 };

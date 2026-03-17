@@ -15,13 +15,6 @@ const SignupScreen = () => {
             router.replace("/login");
           }
         }}
-        onCancel={
-          router.canGoBack()
-            ? () => {
-                router.back();
-              }
-            : undefined
-        }
       />
     </View>
   );

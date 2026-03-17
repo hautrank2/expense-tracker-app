@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useNavigation, useRouter } from "expo-router";
 import AllExpenseScreen from "./all";
+import ProfileScreen from "./profile";
 import RecentExpenseScreen from "./recent";
 
 const TAB_BAR_HEIGHT = 64; // chỉnh 72~88 tuỳ UI
@@ -17,6 +18,7 @@ const TAB_BAR_HEIGHT = 64; // chỉnh 72~88 tuỳ UI
 const routes = [
   { key: "recent", title: "Recent", focusedIcon: "clock-outline" },
   { key: "all", title: "All", focusedIcon: "format-list-bulleted" },
+  { key: "profile", title: "Profile", focusedIcon: "account-circle" },
 ];
 
 export default function ExpenseLayout() {
@@ -31,6 +33,8 @@ export default function ExpenseLayout() {
         return <RecentExpenseScreen />;
       case "all":
         return <AllExpenseScreen />;
+      case "profile":
+        return <ProfileScreen />;
       default:
         return null;
     }

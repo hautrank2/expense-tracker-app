@@ -1,8 +1,11 @@
+import { LoginResult } from "@/components/auth/LoginForm";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, {
   createContext,
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -10,14 +13,12 @@ import React, {
 type AuthContextType = {
   isAuthenticated: boolean;
   payload: AuthPayload | null;
-  onAuthticate: (token: AuthPayload) => void;
+  onAuthticate: (token: AuthPayload) => Promise<void>;
   onLogout: () => void;
+  token: string | null;
 };
 
-export type AuthPayload = {
-  email: string;
-  token: string;
-};
+export type AuthPayload = LoginResult;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -25,15 +26,39 @@ type AuthContextProviderProps = {
   children: ReactNode;
 };
 
+export const AUTH_PAYLOAD_LOCAL = "EXPENSE_APP_AUTH_LOCAL";
+
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [payload, setPayload] = useState<AuthPayload | null>(null);
 
-  const onAuthticate = useCallback((newToken: AuthPayload) => {
-    setPayload(newToken);
+  const token: string | null = useMemo(
+    () => payload?._tokenResponse.idToken ?? null,
+    [payload],
+  );
+
+  const onAuthticate = useCallback(async (payload: AuthPayload) => {
+    setPayload(payload);
+    await AsyncStorage.setItem(AUTH_PAYLOAD_LOCAL, JSON.stringify(payload));
   }, []);
 
-  const onLogout = useCallback(() => {
+  const onLogout = useCallback(async () => {
+    await AsyncStorage.removeItem(AUTH_PAYLOAD_LOCAL);
     setPayload(null);
+  }, []);
+
+  const fetchAuthLocal = async () => {
+    try {
+      const res = await AsyncStorage.getItem(AUTH_PAYLOAD_LOCAL);
+      if (typeof res !== "string") return;
+      const result = JSON.parse(res) as AuthPayload;
+      setPayload(result);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchAuthLocal();
   }, []);
 
   const value = useMemo<AuthContextType>(
@@ -42,8 +67,9 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       payload,
       onAuthticate,
       onLogout,
+      token,
     }),
-    [onAuthticate, onLogout, payload],
+    [onAuthticate, onLogout, payload, token],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

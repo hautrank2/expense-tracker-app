@@ -1,9 +1,11 @@
 import { auth } from "@/firebase";
+import { FirebaseError } from "firebase/app";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
 import { Button, HelperText, Snackbar, TextInput } from "react-native-paper";
+
 export type SignupFormProps = {
   defaultValues?: Partial<SignupValues>;
   afterSuccess?: (values: SignupValues) => void;
@@ -50,15 +52,25 @@ export const SignupForm = ({
         email: values.email.trim(),
         password: values.password,
       });
-    } catch (err) {
-      console.log(err);
+    } catch (err: unknown) {
+      let str = "";
+      if (err instanceof FirebaseError) {
+        switch (err.code) {
+          case "auth/email-already-in-use":
+            str = "The email address has already been used.";
+            break;
+          default:
+            str = "Something wrong";
+        }
+      }
+      setSnackbar(str);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <View className="flex flex-col gap-2">
+    <View className="flex flex-col gap-2 flex-1">
       <Snackbar
         visible={!!snackbar}
         onDismiss={() => setSnackbar(null)}
@@ -151,27 +163,25 @@ export const SignupForm = ({
         </View>
       </View>
 
-      <View className="flex flex-row gap-2 items-center justify-end">
-        {onCancel && (
-          <Button
-            mode="text"
-            onPress={onCancel}
-            loading={isSubmitting}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
-        )}
-
+      {onCancel && (
         <Button
-          mode="contained"
-          onPress={handleSubmit(onSubmit)}
+          mode="text"
+          onPress={onCancel}
           loading={isSubmitting}
-          disabled={!isValid || isSubmitting}
+          disabled={isSubmitting}
         >
-          Sign up
+          Cancel
         </Button>
-      </View>
+      )}
+
+      <Button
+        mode="contained"
+        onPress={handleSubmit(onSubmit)}
+        loading={isSubmitting}
+        disabled={!isValid || isSubmitting}
+      >
+        Sign up
+      </Button>
     </View>
   );
 };
