@@ -7,8 +7,12 @@ import { Button } from "react-native-paper";
 const Screen = () => {
   const { isAuthenticated } = useAuthCtx();
 
+  // if (isAuthenticated) {
+  //   return <Redirect href="/overview/recent" />;
+  // }
+
   if (isAuthenticated) {
-    return <Redirect href="/overview/recent" />;
+    return <Redirect href="/place" />;
   }
 
   return (

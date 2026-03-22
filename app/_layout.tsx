@@ -1,18 +1,17 @@
+import { AllProviders } from "@/providers";
+import { useAuthCtx } from "@/store/auth";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
-
-import { AllProviders } from "@/providers";
 import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "react-native";
+import { enGB, registerTranslation } from "react-native-paper-dates";
+import "react-native-reanimated";
 import "../global.css";
 
-import { useAuthCtx } from "@/store/auth";
-import { enGB, registerTranslation } from "react-native-paper-dates";
 registerTranslation("en-GB", enGB);
 
 export default function RootLayout() {
@@ -34,11 +33,20 @@ const RootStack = () => {
 
   return (
     <Stack>
+      <Stack.Screen
+        name="index"
+        options={{ headerShown: false, title: "Expense app" }}
+      />
+      <Stack.Screen
+        name="location-map-picker"
+        options={{ title: "Pick location" }}
+      />
       <Stack.Protected guard={!isAuthenticated}>
         <Stack.Screen name="login" options={{ title: "Login" }} />
         <Stack.Screen name="sign-up" options={{ title: "Signup" }} />
       </Stack.Protected>
       <Stack.Protected guard={isAuthenticated}>
+        <Stack.Screen name="place" options={{ headerShown: false }} />
         <Stack.Screen name="overview" options={{ title: "Expense Tracker" }} />
         <Stack.Screen
           name="manage-expense"
