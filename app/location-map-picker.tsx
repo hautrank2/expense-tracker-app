@@ -1,10 +1,12 @@
-import { LocationOnMapPicker, LocationValue } from "@/components/location";
+import { LocationValue } from "@/components/location";
 import { useLocalSearchParams } from "expo-router";
-import React, { useMemo } from "react";
-import { View } from "react-native";
+import React, { useMemo, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 const LocationMapPickerScreen = () => {
   const params = useLocalSearchParams();
+  const [coor, setCoor] = useState<LatLng>();
 
   const currentLocation: LocationValue | null = useMemo(() => {
     const rs = params["currentLocation"];
@@ -16,8 +18,9 @@ const LocationMapPickerScreen = () => {
   }, [params]);
 
   return (
-    <View>
-      <LocationOnMapPicker
+    <View className="flex-1">
+      <MapView
+        provider={PROVIDER_GOOGLE}
         initialRegion={
           currentLocation
             ? {
@@ -28,7 +31,17 @@ const LocationMapPickerScreen = () => {
               }
             : undefined
         }
-      />
+        style={StyleSheet.absoluteFill}
+        onPress={(e) => {
+          console.log("onPress");
+          setCoor(e.nativeEvent.coordinate);
+        }}
+        onLongPress={(e) => {
+          console.log("onLongPress");
+        }}
+      >
+        {coor && <Marker coordinate={coor} />}
+      </MapView>
     </View>
   );
 };
