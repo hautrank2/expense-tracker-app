@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, ViewProps } from "react-native";
 import { Button } from "react-native-paper";
 import { LocationValue } from "../type";
-import { useLocation } from "./hook";
+import { useLocationPicker } from "./hook";
 
 export type LocationPickerProps = ViewProps & {
   value?: LocationValue | null;
@@ -15,7 +15,7 @@ export const LocationPicker = (props: LocationPickerProps) => {
     onPickCurrentLocation,
     loading,
     onOpenMap,
-  } = useLocation(props);
+  } = useLocationPicker(props);
 
   return (
     <View {...containerProps}>

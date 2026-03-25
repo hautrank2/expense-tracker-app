@@ -1,12 +1,19 @@
 import { LocationValue } from "@/components/location";
-import { useLocalSearchParams } from "expo-router";
-import React, { useMemo, useState } from "react";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import React, { useLayoutEffect, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { Button } from "react-native-paper";
 
 const LocationMapPickerScreen = () => {
-  const params = useLocalSearchParams();
+  const params = useLocalSearchParams<{
+    currentLocation?: string;
+    returnTo?: string;
+  }>();
+
   const [coor, setCoor] = useState<LatLng>();
+  const navigation = useNavigation();
+  const router = useRouter();
 
   const currentLocation: LocationValue | null = useMemo(() => {
     const rs = params["currentLocation"];
@@ -16,6 +23,31 @@ const LocationMapPickerScreen = () => {
       ? currentLocation
       : null;
   }, [params]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => {
+        return (
+          <Button
+            onPress={() => {
+              const returnTo = params.returnTo;
+              if (!!returnTo) {
+                router.replace({
+                  pathname: returnTo as any,
+                  params: { lng: coor?.longitude, lat: coor?.latitude },
+                });
+              } else if (router.canGoBack() && !returnTo) {
+                router.back();
+                router.setParams({ lng: coor?.longitude, lat: coor?.latitude });
+              }
+            }}
+          >
+            Save
+          </Button>
+        );
+      },
+    });
+  }, [coor]);
 
   return (
     <View className="flex-1">
@@ -33,11 +65,7 @@ const LocationMapPickerScreen = () => {
         }
         style={StyleSheet.absoluteFill}
         onPress={(e) => {
-          console.log("onPress");
           setCoor(e.nativeEvent.coordinate);
-        }}
-        onLongPress={(e) => {
-          console.log("onLongPress");
         }}
       >
         {coor && <Marker coordinate={coor} />}

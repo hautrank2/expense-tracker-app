@@ -1,22 +1,27 @@
 import * as Location from "expo-location";
-import { useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert } from "react-native";
 import { LocationPickerProps } from ".";
+import { useLocation } from "../hook";
 import { LocationValue } from "../type";
 
-export type UseLocationHookProps = LocationPickerProps;
+export type UseLocationPickerHookProps = LocationPickerProps;
 
-export const useLocation = (props: UseLocationHookProps) => {
+export const useLocationPicker = (props: UseLocationPickerHookProps) => {
   const { value, onPicker, ...restProps } = props;
+  const pathname = usePathname();
+
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { fetchReverseGeoCoding } = useLocation();
 
   const controlled = useMemo(() => {
     return Object.prototype.hasOwnProperty.call(props, "value");
   }, [props]);
 
   const [location, setLocation] = useState<LocationValue | null>(value ?? null);
+  const [address, setAddress] = useState("");
 
   const onPickCurrentLocation = async () => {
     try {
@@ -69,15 +74,31 @@ export const useLocation = (props: UseLocationHookProps) => {
       pathname: "/location-map-picker",
       params: {
         currentLocation: location,
+        returnTo: pathname,
       },
     });
   };
+
+  const fetchAddress = useCallback(async () => {
+    try {
+      if (!location) return;
+      const apiRes = await fetchReverseGeoCoding(location);
+
+      console.log("apiRes", apiRes);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [location, fetchReverseGeoCoding]);
 
   useEffect(() => {
     if (controlled) {
       setLocation(value ?? null);
     }
   }, [value, controlled]);
+
+  useEffect(() => {
+    fetchAddress();
+  }, [location, fetchAddress]);
 
   return {
     containerProps: restProps,

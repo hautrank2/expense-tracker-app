@@ -16,6 +16,8 @@ const PlaceForm = ({ defaultValues }: PlaceFormProps) => {
   });
 
   const { control } = form;
+  const lng = form.watch("lng");
+  const lat = form.watch("lat");
 
   return (
     <View className="place-form">
@@ -50,21 +52,12 @@ const PlaceForm = ({ defaultValues }: PlaceFormProps) => {
           )}
         />
 
-        <Controller
-          control={control}
-          name="location"
-          rules={{
-            required: "Please picker a location",
-          }}
-          render={({ field }) => (
-            <View>
-              <Text variant="titleMedium" className="mb-2">
-                Location
-              </Text>
-              <LocationPicker />
-            </View>
-          )}
-        />
+        <View>
+          <Text variant="titleMedium" className="mb-2">
+            Location
+          </Text>
+          <LocationPicker value={lat && lng ? [lat, lng] : undefined} />
+        </View>
       </View>
     </View>
   );
