@@ -1,5 +1,6 @@
 import { AllProviders } from "@/providers";
 import { useAuthCtx } from "@/store/auth";
+import { initDb } from "@/utils/database";
 import {
   DarkTheme,
   DefaultTheme,
@@ -7,6 +8,7 @@ import {
 } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { enGB, registerTranslation } from "react-native-paper-dates";
 import "react-native-reanimated";
@@ -16,6 +18,10 @@ registerTranslation("en-GB", enGB);
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+
+  useEffect(() => {
+    initDb();
+  }, []);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
@@ -37,10 +43,7 @@ const RootStack = () => {
         name="index"
         options={{ headerShown: false, title: "Expense app" }}
       />
-      <Stack.Screen
-        name="location-map-picker"
-        options={{ title: "Pick location" }}
-      />
+
       <Stack.Protected guard={!isAuthenticated}>
         <Stack.Screen name="login" options={{ title: "Login" }} />
         <Stack.Screen name="sign-up" options={{ title: "Signup" }} />

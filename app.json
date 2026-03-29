@@ -36,7 +36,15 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "headers": {
+            "Cross-Origin-Embedder-Policy": "credentialless", // for sqlLite
+            "Cross-Origin-Opener-Policy": "same-origin" // for sqlLite
+          }
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -67,6 +75,24 @@
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ],
+      [
+        "expo-sqlite",
+        {
+          "enableFTS": true,
+          "useSQLCipher": true,
+          "android": {
+            // Override the shared configuration for Android
+            "enableFTS": false,
+            "useSQLCipher": false
+          },
+          "ios": {
+            // You can also override the shared configurations for iOS
+            "customBuildFlags": [
+              "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
+            ]
+          }
         }
       ]
     ],

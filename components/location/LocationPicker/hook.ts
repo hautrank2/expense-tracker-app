@@ -9,7 +9,7 @@ import { LocationValue } from "../type";
 export type UseLocationPickerHookProps = LocationPickerProps;
 
 export const useLocationPicker = (props: UseLocationPickerHookProps) => {
-  const { value, onPicker, ...restProps } = props;
+  const { value, onPicker, pickerUrl, ...restProps } = props;
   const pathname = usePathname();
 
   const [loading, setLoading] = useState(false);
@@ -71,9 +71,10 @@ export const useLocationPicker = (props: UseLocationPickerHookProps) => {
 
   const onOpenMap = () => {
     router.push({
-      pathname: "/location-map-picker",
+      pathname: (pickerUrl ?? "/place/location-picker") as any,
       params: {
-        currentLocation: location,
+        lat: location?.[0],
+        lng: location?.[1],
         returnTo: pathname,
       },
     });
@@ -83,8 +84,9 @@ export const useLocationPicker = (props: UseLocationPickerHookProps) => {
     try {
       if (!location) return;
       const apiRes = await fetchReverseGeoCoding(location);
-
-      console.log("apiRes", apiRes);
+      if (typeof apiRes === "string") {
+        setAddress(apiRes);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -106,6 +108,7 @@ export const useLocationPicker = (props: UseLocationPickerHookProps) => {
     loading,
     setLoading,
     location,
+    address,
     onPickCurrentLocation,
     onOpenMap,
   };

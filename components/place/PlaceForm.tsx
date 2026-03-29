@@ -1,23 +1,77 @@
 import { PlaceModel } from "@/types/place";
-import React from "react";
+import { placeDb } from "@/utils/database";
+import { useLocalSearchParams, usePathname, useRouter } from "expo-router";
+import React, { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
 import { ImagePicker } from "../file";
 import { LocationPicker } from "../location";
 
 export type PlaceFormProps = {
-  defaultValues?: Partial<PlaceModel>;
+  editPlaceId?: string;
+  defaultValues?: Partial<Omit<PlaceModel, "id">>;
+  affterSuccess?: () => void;
 };
-const PlaceForm = ({ defaultValues }: PlaceFormProps) => {
+const PlaceForm = ({
+  defaultValues,
+  editPlaceId,
+  affterSuccess,
+}: PlaceFormProps) => {
+  const isEdit = !!editPlaceId;
+  const params = useLocalSearchParams<{
+    title: string;
+    imgUrl: string;
+    address: string;
+    lng: string;
+    lat: string;
+  }>();
+
   const form = useForm({
     mode: "onBlur",
-    defaultValues,
+    defaultValues: {
+      title: params?.title ?? defaultValues?.title ?? "",
+      imgUrl: params?.imgUrl ?? defaultValues?.imgUrl ?? "",
+      address: params?.address ?? defaultValues?.address ?? "",
+      lng: +(params.lng ?? defaultValues?.lng ?? 0),
+      lat: +(params.lat ?? defaultValues?.lat ?? 1),
+    },
   });
+  const router = useRouter();
+  const pathname = usePathname();
 
   const { control } = form;
   const lng = form.watch("lng");
   const lat = form.watch("lat");
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      await form.trigger();
+      const formValues = form.getValues();
+
+      if (isEdit) {
+        await placeDb.editPlace(+editPlaceId, {
+          title: formValues.title ?? "",
+          imgUrl: formValues.imgUrl ?? "",
+          address: formValues.address ?? "",
+          lng: formValues.lng ?? 0,
+          lat: formValues.lat ?? 1,
+        });
+      } else {
+        await placeDb.addPlace({
+          title: formValues.title ?? "",
+          imgUrl: formValues.imgUrl ?? "",
+          address: formValues.address ?? "",
+          lng: formValues.lng ?? 0,
+          lat: formValues.lat ?? 1,
+        });
+      }
+
+      affterSuccess?.();
+    } catch (err) {
+      console.log(err);
+    }
+  }, [form]);
 
   return (
     <View className="place-form">
@@ -29,9 +83,41 @@ const PlaceForm = ({ defaultValues }: PlaceFormProps) => {
             required: "Please enter a value",
           }}
           render={({ field }) => (
-            <TextInput mode="outlined" label="Title" {...field} />
+            <TextInput
+              mode="outlined"
+              label="Title"
+              {...field}
+              onChangeText={(v) => field.onChange(v)}
+            />
           )}
         />
+
+        <View>
+          <Text variant="titleMedium" className="mb-2">
+            Location
+          </Text>
+          <LocationPicker
+            value={lat && lng ? [lat, lng] : undefined}
+            pickerUrl="/place/location-picker"
+          />
+          <Button
+            className="mt-2"
+            mode="outlined"
+            onPress={() => {
+              const values = form.getValues();
+              router.push({
+                pathname: "/place/location-picker",
+                params: {
+                  ...values,
+                  returnTo: pathname,
+                },
+              });
+            }}
+          >
+            Open map
+          </Button>
+        </View>
+
         <Controller
           control={control}
           name="imgUrl"
@@ -53,10 +139,9 @@ const PlaceForm = ({ defaultValues }: PlaceFormProps) => {
         />
 
         <View>
-          <Text variant="titleMedium" className="mb-2">
-            Location
-          </Text>
-          <LocationPicker value={lat && lng ? [lat, lng] : undefined} />
+          <Button mode="contained" onPress={() => handleSubmit()}>
+            {isEdit ? "Save" : "Add"}
+          </Button>
         </View>
       </View>
     </View>

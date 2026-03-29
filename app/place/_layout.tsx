@@ -20,7 +20,11 @@ const PlaceLayout = () => {
         }}
       />
       <Stack.Screen name="add" options={{ title: "Add place" }} />
-      <Stack.Screen name="edit" options={{ title: "Edit place" }} />
+      <Stack.Screen name="[placeId]" options={{ title: "Edit place" }} />
+      <Stack.Screen
+        name="location-picker"
+        options={{ title: "Pick location" }}
+      />
     </Stack>
   );
 };
