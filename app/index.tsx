@@ -1,8 +1,14 @@
 import { useAuthCtx } from "@/store/auth";
-import { Redirect, router } from "expo-router";
+import { router } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-paper";
+
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
 
 const Screen = () => {
   const { isAuthenticated } = useAuthCtx();
@@ -11,9 +17,9 @@ const Screen = () => {
   //   return <Redirect href="/overview/recent" />;
   // }
 
-  if (isAuthenticated) {
-    return <Redirect href="/place" />;
-  }
+  // if (isAuthenticated) {
+  //   return <Redirect href="/place" />;
+  // }
 
   return (
     <View style={styles.container}>

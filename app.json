@@ -27,6 +27,9 @@
       "permissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
       ],
       "package": "com.hautrank2.expensetrackerapp"
@@ -40,21 +43,21 @@
         "expo-router",
         {
           "headers": {
-            "Cross-Origin-Embedder-Policy": "credentialless", // for sqlLite
-            "Cross-Origin-Opener-Policy": "same-origin" // for sqlLite
+            "Cross-Origin-Embedder-Policy": "credentialless",
+            "Cross-Origin-Opener-Policy": "same-origin"
           }
         }
       ],
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#232323",
+          "image": "./assets/icons/app-icon.png",
           "dark": {
+            "image": "./assets/images/app-icon.png",
             "backgroundColor": "#000000"
-          }
+          },
+          "imageWidth": 200
         }
       ],
       [
@@ -83,12 +86,10 @@
           "enableFTS": true,
           "useSQLCipher": true,
           "android": {
-            // Override the shared configuration for Android
             "enableFTS": false,
             "useSQLCipher": false
           },
           "ios": {
-            // You can also override the shared configurations for iOS
             "customBuildFlags": [
               "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
             ]
@@ -105,6 +106,12 @@
       "eas": {
         "projectId": "09c0e77c-5c08-4026-ae8e-dba312dd1e3e"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/09c0e77c-5c08-4026-ae8e-dba312dd1e3e"
     }
   }
 }
